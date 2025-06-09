@@ -29,7 +29,7 @@ class CoinListRepositoryImpl(
             ) {
                 url {
                     parameters.append("vs_currency", "usd")
-
+                    parameters.append("per_page", "${250}")
                 }
                 header(key = "x-cg-demo-api-key", value = BuildConfig.API_KEY)
             }

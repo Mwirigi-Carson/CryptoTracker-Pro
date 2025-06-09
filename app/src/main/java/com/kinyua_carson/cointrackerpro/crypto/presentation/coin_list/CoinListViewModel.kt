@@ -1,6 +1,5 @@
 package com.kinyua_carson.cointrackerpro.crypto.presentation.coin_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kinyua_carson.cointrackerpro.core.domain.util.onError
@@ -20,8 +19,20 @@ class CoinListViewModel(
     private val _state = MutableStateFlow(CoinsListState())
     val state = _state.asStateFlow()
 
+    private val _filteredCoins = MutableStateFlow(CoinsListState().coins)
+    val filteredCoins = _filteredCoins.asStateFlow()
+
+    private var currentSearchQuery = ""
+
     init {
         loadCoins()
+        viewModelScope.launch {
+            state.collect { newState ->
+                if (currentSearchQuery.isEmpty()) {
+                    _filteredCoins.value = newState.coins
+                }
+            }
+        }
     }
 
     fun onAction(action: CoinListAction){
@@ -29,7 +40,24 @@ class CoinListViewModel(
             is CoinListAction.OnCoinClick -> {
                 selectCoin(coinUI = action.coinUI)
             }
+            is CoinListAction.OnSearchQuery -> {
+                searchCoin(action.query)
+            }
         }
+    }
+
+    fun searchCoin(query: String) {
+        currentSearchQuery = query
+        val filtered = if (query.isBlank()) {
+            _state.value.coins // Show all coins when search is empty
+        } else {
+            _state.value.coins.filter { coin ->
+                coin.name.contains(query, ignoreCase = true) ||
+                        coin.symbol.contains(query, ignoreCase = true) ||
+                        coin.id.contains(query, ignoreCase = true)
+            }
+        }
+        _filteredCoins.value = filtered
     }
 
     private fun selectCoin(

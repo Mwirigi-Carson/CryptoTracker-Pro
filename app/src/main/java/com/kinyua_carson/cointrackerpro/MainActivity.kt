@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
                         state = state,
                         viewModel = viewModel
                     )
-
                 }
             }
         }
