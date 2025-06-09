@@ -1,9 +1,12 @@
 package com.kinyua_carson.cointrackerpro.crypto.presentation.coin_details
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -43,21 +46,38 @@ fun CoinDetailsScreen(
                 .fillMaxSize()
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             AsyncImage(
                 model = state.selectedCoinUI.image,
                 contentDescription = null,
                 modifier = Modifier.size(100.dp)
             )
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = state.selectedCoinUI.name,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
                 color = contentColor
             )
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = state.selectedCoinUI.symbol,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = contentColor
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Price: ${ state.selectedCoinUI.currentPriceUsd.formatted }",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = contentColor
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Market Cap: ${state.selectedCoinUI.marketCapUsd.formatted}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = contentColor
