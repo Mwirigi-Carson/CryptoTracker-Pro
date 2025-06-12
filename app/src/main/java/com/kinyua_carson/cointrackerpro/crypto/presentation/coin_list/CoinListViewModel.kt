@@ -6,8 +6,10 @@ import com.kinyua_carson.cointrackerpro.core.domain.util.onError
 import com.kinyua_carson.cointrackerpro.core.domain.util.onSuccess
 import com.kinyua_carson.cointrackerpro.crypto.data.CoinListRepositoryImpl
 import com.kinyua_carson.cointrackerpro.crypto.domain.toCoinUi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
@@ -23,6 +25,9 @@ class CoinListViewModel(
     val filteredCoins = _filteredCoins.asStateFlow()
 
     private var currentSearchQuery = ""
+
+    private val _events = Channel<CoinListEvents>()
+    val events = _events.receiveAsFlow()
 
     init {
         loadCoins()
@@ -101,12 +106,8 @@ class CoinListViewModel(
                         )
                     }
                 }
-                .onError {
-                    _state.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
+                .onError { error ->
+                    _events.send(CoinListEvents.Error(error))
                 }
         }
     }
